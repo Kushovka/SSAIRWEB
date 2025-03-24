@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSAIRWEB</title>
+    <link
+      rel="shortcut icon"
+      href="https://static.tildacdn.com/tild6561-3963-4533-a264-353465346533/favicon_1.ico"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Jost:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic"
+      rel="stylesheet"
+    />
+
+    <script
+      src="https://kit.fontawesome.com/3af64f3dec.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="./swiper-bundle.min.css" />
+  </head>
+  <body>
+    <nav class="navigation-checkout">
+      <div class="more-products">
+        <a href="./index.html" class="back">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>More products</span>
+        </a>
+      </div>
+      <div class="nav-description">
+        <h3>Ваш заказ</h3>
+      </div>
+    </nav>
+    <hr class="mi-hr-nav" />
+    <section class="item check">
+      <div class="info">
+        <form action="#">
+          <h3>Основное</h3>
+          <label for="#">Фамилия Имя Отчество</label>
+          <input type="text" name="name" placeholder="ССеир Марсель Вебович" />
+          <label for="#">Номер Телефона</label>
+          <input type="tel" name="tel" placeholder="+7 (999) 999-99-99" />
+          <label for="#">Ваша почта</label>
+          <input type="email" name="email" placeholder="ssair@web.com" />
+          <h3>Доставка</h3>
+          <label for="#">Город</label>
+          <input
+            type="text"
+            id="city-input"
+            name="city"
+            placeholder="Начните вводить город..."
+            autocomplete="off"
+          />
+          <div id="city-suggestions" class="suggestions-container"></div>
+          <div class="info-description"></div>
+          <label for="#">Промокод</label>
+          <input type="text" name="text" placeholder="Введите промокод" />
+          <label for="#">Комментарий</label>
+          <input type="text" name="text" placeholder="I LOVE SSAIR!!!" />
+          <label for="#">Ник в Telegram</label>
+          <input type="text" name="text" placeholder="@ssairweb" />
+        </form>
+        <div class="checkout-item">
+          <a href="#" class="checkout-item-btn">checkout</a>
+        </div>
+      </div>
+      <!-- items -->
+      <div class="items-checkout">
+        <div class="item-slider"></div>
+      </div>
+      <ul class="navbar-checkout">
+        <div class="scrollable-content">
+          <li class="cart-items-checkout"></li>
+          <hr class="mi-hr-checkout" />
+          <li class="cart-total-checkout"></li>
+        </div>
+      </ul>
+    </section>
+    <section>
+      <div class="footer"></div>
+    </section>
+    <script>
+      // Конфигурация
+      const CITIES_JSON_PATH = "./russian-cities.json"; // Путь к вашему JSON-файлу
+
+      // Элементы DOM
+      const cityInput = document.getElementById("city-input");
+      const suggestionsContainer = document.getElementById("city-suggestions");
+      const cityDescription = document.querySelector(".info-description");
+
+      // Основная функция инициализации
+      async function initCitySearch() {
+        try {
+          // 1. Загрузка городов
+          const response = await fetch(CITIES_JSON_PATH);
+          if (!response.ok) throw new Error("Ошибка загрузки файла");
+          const cities = await response.json();
+
+          // 2. Обработчик ввода
+          cityInput.addEventListener("input", function (e) {
+            const searchTerm = e.target.value.trim().toLowerCase();
+            suggestionsContainer.innerHTML = "";
+
+            if (searchTerm.length > 0) {
+              // Фильтрация по началу названия и сортировка
+              const results = cities
+                .filter((city) =>
+                  city.name.toLowerCase().startsWith(searchTerm)
+                )
+                .sort((a, b) => a.name.length - b.name.length)
+                .slice(0, 10);
+
+              showSuggestions(results);
+              suggestionsContainer.style.display = "block";
+            } else {
+              suggestionsContainer.style.display = "none";
+            }
+          });
+
+          // 3. Обработчик выбора города
+          suggestionsContainer.addEventListener("click", function (e) {
+            if (e.target.classList.contains("suggestion-item")) {
+              const city = JSON.parse(e.target.dataset.city);
+              cityInput.value = city.name;
+              cityDescription.textContent = `Регион: ${
+                city.subject || city.region
+              }`;
+              suggestionsContainer.style.display = "none";
+            }
+          });
+
+          // 4. Закрытие при клике вне поля
+          document.addEventListener("click", (e) => {
+            if (
+              !e.target.closest("#city-input") &&
+              !e.target.closest("#city-suggestions")
+            ) {
+              suggestionsContainer.style.display = "none";
+            }
+          });
+        } catch (error) {
+          console.error("Ошибка инициализации:", error);
+          cityDescription.textContent = "Ошибка загрузки данных о городах";
+          suggestionsContainer.style.display = "none";
+        }
+      }
+
+      // Показ подсказок
+      function showSuggestions(results) {
+        suggestionsContainer.innerHTML = results
+          .map(
+            (city) => `
+              <div class="suggestion-item" data-city='${JSON.stringify(city)}'>
+                  ${city.name} (${city.subject || city.region})
+              </div>
+          `
+          )
+          .join("");
+
+        // Автоматический выбор первого элемента при нажатии Tab
+        cityInput.addEventListener("keydown", (e) => {
+          if (e.key === "Tab" && results.length > 0) {
+            e.preventDefault();
+            const firstCity = results[0];
+            cityInput.value = firstCity.name;
+            cityDescription.textContent = `Регион: ${
+              firstCity.subject || firstCity.region
+            }`;
+            suggestionsContainer.style.display = "none";
+          }
+        });
+      }
+
+      // Запуск при загрузке страницы
+      document.addEventListener("DOMContentLoaded", initCitySearch);
+    </script>
+    <!-- basket-script-------------------------------------------------- -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const CartManager = {
+          cart: [],
+
+          init() {
+            this.loadCart();
+            this.renderCart();
+            this.initEventListeners();
+          },
+
+          loadCart() {
+            this.cart = JSON.parse(localStorage.getItem("cart")) || [];
+          },
+
+          saveCart() {
+            localStorage.setItem("cart", JSON.stringify(this.cart));
+          },
+
+          addItem(item) {
+            const uniqueId = `${item.id}-${item.model}-${item.size}`;
+            const existingItem = this.cart.find((i) => i.uniqueId === uniqueId);
+
+            if (existingItem) {
+              existingItem.quantity += 1;
+            } else {
+              this.cart.push({
+                ...item,
+                uniqueId,
+                quantity: 1,
+              });
+            }
+
+            this.saveCart();
+            this.renderCart();
+          },
+
+          removeItem(uniqueId) {
+            this.cart = this.cart.filter((item) => item.uniqueId !== uniqueId);
+            this.saveCart();
+            this.renderCart();
+          },
+
+          renderCart() {
+            const cartContainer = document.querySelector(
+              ".cart-items-checkout"
+            );
+            const totalElement = document.querySelector(".cart-total-checkout");
+            let total = 0;
+            let html = "";
+
+            this.cart.forEach((item) => {
+              total += item.price * item.quantity;
+              html += `
+                <div class="cart-item-checkout" data-unique-id="${
+                  item.uniqueId
+                }">
+                    <a href="${
+                      item.url
+                    }" class="cart-item-link"> <!-- Добавляем ссылку -->
+                        <h3>${item.name}</h3>
+                    </a>
+                    <p>Модель: ${item.model}</p>
+                    <p>Размер: ${item.size}</p>
+                    <p>Количество: ${item.quantity}</p>
+                    <p>Цена: ${(item.price * item.quantity).toFixed(2)}р.</p>
+                    <span class="remove-item-checkout"><i class="fa-solid fa-xmark"></i></span>
+                </div>
+            `;
+            });
+
+            if (cartContainer) {
+              cartContainer.innerHTML = this.cart.length
+                ? html
+                : '<div class="cart-empty">Корзина пуста.<br>Добавьте в корзину хотя бы один товар*</div>';
+            }
+
+            if (totalElement) {
+              totalElement.innerHTML = `
+                            <h2>Сумма:</h2>
+                            <div class="cart-summary-checkout">
+                                <p class="total">${total.toFixed(2)}р.</p>
+                                <p>(Товаров: ${this.cart.reduce(
+                                  (sum, item) => sum + item.quantity,
+                                  0
+                                )})</p>
+                            </div>
+                        `;
+            }
+          },
+
+          initEventListeners() {
+            document.querySelectorAll(".cart-item-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                document.getElementById("basket-btn").checked = false;
+              });
+            });
+            
+            document.addEventListener("click", (e) => {
+              if (e.target.closest(".remove-item-checkout")) {
+                if (
+                  confirm("Вы уверены, что хотите удалить товар из корзины?")
+                ) {
+                  const uniqueId =
+                    e.target.closest(".cart-item-checkout").dataset.uniqueId;
+                  this.removeItem(uniqueId);
+                }
+              }
+            });
+
+            
+            document;
+            document
+              .querySelector(".buy-now-btn")
+              ?.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                const getCleanText = (selector) =>
+                  document
+                    .querySelector(selector)
+                    ?.textContent.replace(" ▼", "") || "";
+
+                
+                const productUrl = window.location.href;
+
+                const item = {
+                  id: "product-4",
+                  name: getCleanText(".description h1"),
+                  model: getCleanText(".pattern-1"),
+                  size: getCleanText(".size-1"),
+                  price:
+                    parseFloat(
+                      getCleanText(".description h2")
+                        .replace(/[^\d,]/g, "")
+                        .replace(",", ".")
+                    ) || 0,
+                  url: productUrl, 
+                };
+
+                if (item.model === "модель" || item.size === "размер") {
+                  alert("Пожалуйста, выберите модель и размер");
+                  return;
+                }
+
+                if (isNaN(item.price) || item.price <= 0) {
+                  alert("Некорректная цена товара");
+                  return;
+                }
+
+                this.addItem(item);
+              });
+          },
+        };
+
+        
+        CartManager.init();
+
+        
+        const swiper = new Swiper(".mySwiper", {
+          pagination: {
+            el: ".swiper-pagination",
+            type: "progressbar",
+          },
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+        });
+
+        
+        document.querySelectorAll(".slider-img img").forEach((img) => {
+          img.onclick = () => {
+            document.querySelector(".pop-up").style.display = "block";
+            document.querySelector(".pop-up img").src = img.src;
+          };
+        });
+
+        document.querySelector(".pop-up span").onclick = () => {
+          document.querySelector(".pop-up").style.display = "none";
+        };
+      });
+    </script>
+    <!-- menu-script---------------------------------------------------- -->
+    <script>
+      document
+        .querySelector(".menu-overlay")
+        .addEventListener("click", function () {
+          document.getElementById("menu-btn").checked = false;
+        });
+    </script>
+  </body>
+</html>
