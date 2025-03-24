@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SSAIRWEB</title>
+    <link
+      rel="shortcut icon"
+      href="https://static.tildacdn.com/tild6561-3963-4533-a264-353465346533/favicon_1.ico"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Jost:100,200,300,regular,500,600,700,800,900,100italic,200italic,300italic,italic,500italic,600italic,700italic,800italic,900italic"
+      rel="stylesheet"
+    />
+
+    <script
+      src="https://kit.fontawesome.com/3af64f3dec.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- NAVIGATION=================================== -->
+    <nav class="navigation">
+      <!-- menu-icon -->
+      <input type="checkbox" id="menu-btn" class="menu-btn" />
+      <label for="menu-btn" class="menu-icon">
+        <span class="nav-icon"></span>
+      </label>
+      <div class="menu-overlay"></div>
+      <!-- logo -->
+      <a href="./index.html" class="logo">
+        <img
+          src="https://optim.tildacdn.com/tild3430-3234-4131-b064-613762376234/-/resize/393x/-/format/webp/ssaie_web.png"
+          alt="logo"
+        />
+      </a>
+      <!-- MENU====================================== -->
+      <ul class="menu">
+        <!-- logo2 -->
+        <a href="./index.html" class="logo2"
+          ><img
+            src="https://static.tildacdn.com/tild3536-6666-4562-b935-313661623861/photo.png"
+            alt=""
+        /></a>
+        <!-- menu -->
+        <li><a href="./delivery.html">ДОСТАВКА</a></li>
+        <li><a href="https://vk.com/ssairweb">ПОДДЕРЖКА</a></li>
+        <li><a href="./offer.html">ДОГОВОР ОФЕРТЫ</a></li>
+        <li><a href="./policy.html">ПОЛИТИКА КОНФ.</a></li>
+        <li><a href="https://vk.com/ssairweb">О НАС</a></li>
+        <!-- web -->
+        <div class="web">
+          <a href="#" class="tg">
+            <i class="fa-brands fa-telegram"></i>
+          </a>
+
+          <a href="#" class="inst">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+        </div>
+        <!-- footer -->
+        <footer>
+          <span class="copyright">© SSAIRWEB 2025</span>
+          <span class="copyright">SITE DESIGN BY KUSHOVKA )</span>
+        </footer>
+      </ul>
+
+      <input type="checkbox" id="basket-btn" />
+      <label for="basket-btn" class="basket-icon">
+        <i class="fa-solid fa-basket-shopping"></i>
+        <i class="fa-solid fa-xmark"></i>
+      </label>
+      <!-- NAVBAR=================================== -->
+      <ul class="navbar">
+        <li><h1>Ваш заказ</h1></li>
+        <hr class="mi-hr" />
+        <div class="scrollable-content">
+          <li class="cart-items"></li>
+          <hr class="mi-hr" />
+          <li class="cart-total"></li>
+        </div>
+        <div class="checkout">
+          <a href="./item-checkout.html" class="checkout-btn">checkout</a>
+        </div>
+      </ul>
+    </nav>
+    <div class="delivery">
+      <h1>ДОСТАВКА</h1>
+      <p>
+        Сколько стоит доставка?<br /><br /><br />
+        -Доставка осуществляются только через сервис CDEK, стоимость доставки
+        фиксированная для каждого города 400р<br /><br />
+        Сколько дней занимает доставка СДЭК? <br /><br /><br />- Средний срок
+        доставки по Москве и Санкт-Петербургу 2-3 дня, если же вы заказываете в
+        другой город, то 4-6 дней +-,с момента обновления трек-номера на сайте
+        СДЭК.<br /><br />
+        Статус моего трек-номера не обновляется уже более 3х дней. Что это
+        значит? <br /><br /><br />
+        Не переживайте, это обычная ситуация. С момента присвоения трек-номера
+        до его обработки может уйти до 7 рабочих дней. Если после этого срока
+        трек-номер так и не обновился - обратитесь в поддержку.
+      </p>
+    </div>
+    <section>
+      <div class="footer"></div>
+    </section>
+    <!-- basket-script-------------------------------------------------- -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const CartManager = {
+          cart: [],
+
+          init() {
+            this.loadCart();
+            this.renderCart();
+            this.initEventListeners();
+          },
+
+          loadCart() {
+            this.cart = JSON.parse(localStorage.getItem("cart")) || [];
+          },
+
+          saveCart() {
+            localStorage.setItem("cart", JSON.stringify(this.cart));
+          },
+
+          addItem(item) {
+            const uniqueId = `${item.id}-${item.model}-${item.size}`;
+            const existingItem = this.cart.find((i) => i.uniqueId === uniqueId);
+
+            if (existingItem) {
+              existingItem.quantity += 1;
+            } else {
+              this.cart.push({
+                ...item,
+                uniqueId,
+                quantity: 1,
+              });
+            }
+
+            this.saveCart();
+            this.renderCart();
+          },
+
+          removeItem(uniqueId) {
+            this.cart = this.cart.filter((item) => item.uniqueId !== uniqueId);
+            this.saveCart();
+            this.renderCart();
+          },
+
+          renderCart() {
+            const cartContainer = document.querySelector(".cart-items");
+            const totalElement = document.querySelector(".cart-total");
+            let total = 0;
+            let html = "";
+
+            this.cart.forEach((item) => {
+              total += item.price * item.quantity;
+              html += `
+            <div class="cart-item" data-unique-id="${item.uniqueId}">
+                <a href="${
+                  item.url
+                }" class="cart-item-link"> <!-- Добавляем ссылку -->
+                    <h3>${item.name}</h3>
+                </a>
+                <p>Модель: ${item.model}</p>
+                <p>Размер: ${item.size}</p>
+                <p>Количество: ${item.quantity}</p>
+                <p>Цена: ${(item.price * item.quantity).toFixed(2)}р.</p>
+                <span class="remove-item"><i class="fa-solid fa-xmark"></i></span>
+            </div>
+        `;
+            });
+
+            if (cartContainer) {
+              cartContainer.innerHTML = this.cart.length
+                ? html
+                : '<div class="cart-empty">Корзина пуста.<br>Добавьте в корзину хотя бы один товар*</div>';
+            }
+
+            if (totalElement) {
+              totalElement.innerHTML = `
+                        <h2>Сумма:</h2>
+                        <div class="cart-summary">
+                            <p>${total.toFixed(2)}р.</p>
+                            <p>Товаров: ${this.cart.reduce(
+                              (sum, item) => sum + item.quantity,
+                              0
+                            )}</p>
+                        </div>
+                    `;
+            }
+          },
+
+          initEventListeners() {
+            document.querySelectorAll(".cart-item-link").forEach((link) => {
+              link.addEventListener("click", () => {
+                document.getElementById("basket-btn").checked = false;
+              });
+            });
+
+            document.addEventListener("click", (e) => {
+              if (e.target.closest(".remove-item")) {
+                if (
+                  confirm("Вы уверены, что хотите удалить товар из корзины?")
+                ) {
+                  const uniqueId =
+                    e.target.closest(".cart-item").dataset.uniqueId;
+                  this.removeItem(uniqueId);
+                }
+              }
+            });
+
+            document;
+            document
+              .querySelector(".buy-now-btn")
+              ?.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                const getCleanText = (selector) =>
+                  document
+                    .querySelector(selector)
+                    ?.textContent.replace(" ▼", "") || "";
+
+                const productUrl = window.location.href;
+
+                const item = {
+                  id: "product-4",
+                  name: getCleanText(".description h1"),
+                  model: getCleanText(".pattern-1"),
+                  size: getCleanText(".size-1"),
+                  price:
+                    parseFloat(
+                      getCleanText(".description h2")
+                        .replace(/[^\d,]/g, "")
+                        .replace(",", ".")
+                    ) || 0,
+                  url: productUrl,
+                };
+
+                if (item.model === "модель" || item.size === "размер") {
+                  alert("Пожалуйста, выберите модель и размер");
+                  return;
+                }
+
+                if (isNaN(item.price) || item.price <= 0) {
+                  alert("Некорректная цена товара");
+                  return;
+                }
+
+                this.addItem(item);
+              });
+          },
+        };
+
+        CartManager.init();
+
+        const swiper = new Swiper(".mySwiper", {
+          pagination: {
+            el: ".swiper-pagination",
+            type: "progressbar",
+          },
+          navigation: {
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          },
+        });
+
+        document.querySelectorAll(".slider-img img").forEach((img) => {
+          img.onclick = () => {
+            document.querySelector(".pop-up").style.display = "block";
+            document.querySelector(".pop-up img").src = img.src;
+          };
+        });
+
+        document.querySelector(".pop-up span").onclick = () => {
+          document.querySelector(".pop-up").style.display = "none";
+        };
+      });
+    </script>
+    <!-- menu-script---------------------------------------------------- -->
+    <script>
+      document
+        .querySelector(".menu-overlay")
+        .addEventListener("click", function () {
+          document.getElementById("menu-btn").checked = false;
+        });
+    </script>
+  </body>
+</html>
