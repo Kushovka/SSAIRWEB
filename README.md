@@ -17,6 +17,12 @@
 </div>
 <br/><br/><br/>
 
+# 🚨 Disclaimer
+<br><br>
+<div align="center">
+  <p> This project is educational and created to demonstrate web development skills. All materials, design, and content are used solely for educational purposes. The project is a clone of an existing website and is not affiliated with the original brand or company. Any resemblance to real products or brands is purely coincidental.</p>
+</div>
+
 
 
 
