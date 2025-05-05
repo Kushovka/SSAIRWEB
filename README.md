@@ -6,10 +6,12 @@
 <br/><br/>
 ![b3ff36d2-bf0d-4f59-a90d-4ba7f0544ca0](https://github.com/user-attachments/assets/79efbf63-8815-4da9-b609-9d379a49d6b5)
 
-
-
-<br/><br/>
-# ⚙️ Tech Stack
+<div align="center">
+<p>
+  SSAIRWEB is a clone of a Russian streetwear website built with pure HTML and CSS. The project showcases the ability to recreate a modern and responsive e-commerce layout, mimicking the structure and styling of the original website. It focuses on responsive design, providing a user-friendly interface while maintaining an authentic look and feel of a streetwear brand’s online store.
+  </p>
+</div>
+<h1>⚙️ Tech Stack</h1>
 <br><br>
 <div align="center">
   <img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white"/>
