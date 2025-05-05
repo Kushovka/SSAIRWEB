@@ -24,6 +24,21 @@
 <div align="center">
   <p> This project is educational and created to demonstrate web development skills. All materials, design, and content are used solely for educational purposes. The project is a clone of an existing website and is not affiliated with the original brand or company. Any resemblance to real products or brands is purely coincidental.</p>
 </div>
+<br><br>
+<h1>☎️ Connect with me </h1>
+ <br><br>
+    <div align="center">
+        <a href="https://t.me/kushovka">
+<img src="https://img.shields.io/badge/Telegram-%2304A1F7.svg?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram" />
+        </a>
+        <a href="https://www.instagram.com/kushovka">
+<img src="https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" />
+        </a>
+        <a href="mailto:kushovk2003@mail.ru">
+<img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="E-mail" />
+        </a>
+</div>
+ <br><br>
 
 
 
